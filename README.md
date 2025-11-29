@@ -147,6 +147,6 @@ A 3–5 minute walkthrough covering:
 
 ---
 
-## 👨‍🎓 Author
+## Author
 
-Andrew Weston
+Adrian Fudge
