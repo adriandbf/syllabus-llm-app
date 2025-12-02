@@ -1,8 +1,3 @@
-"""
-Simple one-command run script for Syllabus LLM App
-Usage: python run.py
-"""
-
 import os
 import subprocess
 

@@ -71,34 +71,21 @@ def _chunk_text(text: str, chunk_size: int = CHUNK_SIZE, overlap: int = CHUNK_OV
 def _get_embedding(text: str) -> List[float]:
     if not HAS_GENAI:
         raise RuntimeError(
-            "Google GenAI SDK not found. Please install `google-genai` (pip install google-genai) "
-            "and set GEMINI API credentials. See README for instructions."
+            "Google GenAI SDK not found. Please install `google-genai` and set GEMINI_API_KEY."
         )
 
-    # Prefer the high-level client if available
-    # The exact method depends on the installed SDK version. We try a couple of common variants.
-    if hasattr(genai, "Client"):
-        client = genai.Client()
-        resp = client.models.embed_text(model=EMBED_MODEL, input=[text])
-        emb = resp[0]
-        return emb
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-    # Older `google.genai` style (examples differ across releases)
-    if hasattr(genai, "embeddings"):
-        resp = genai.embeddings.create(model=EMBED_MODEL, input=text)
-        # response may contain data[0].embedding
-        if isinstance(resp, dict) and "data" in resp:
-            return resp["data"][0]["embedding"]
+    # Embed a single text
+    result = client.models.embed_content(
+        model=EMBED_MODEL,
+        contents=text  # can also be a list of strings
+    )
 
-    # Fallback: attempt `genai.models.embed_text`
-    if hasattr(genai, "models") and hasattr(genai.models, "embed_text"):
-        resp = genai.models.embed_text(model=EMBED_MODEL, input=text)
-        # try to return first embedding
-        if isinstance(resp, list):
-            return resp[0]
-
-    raise RuntimeError("Unable to call the GenAI embeddings API with the installed SDK.")
-
+    # Each item in result.embeddings is a ContentEmbedding object
+    emb_obj = result.embeddings[0]  # first (and only) embedding
+    return emb_obj.values  # this is the numeric vector as a list of floats
+    
 
 def _ensure_index_loaded():
     global _index, _metadata
@@ -195,14 +182,25 @@ def answer_question(question: str) -> str:
     if len(context_joined) > max_context_chars:
         context_joined = context_joined[:max_context_chars]
 
-    prompt = (
-        "You are a helpful assistant that answers questions strictly using the provided syllabus excerpts. "
-        "If the answer is not present in the excerpts, respond: 'I could not find that in the syllabus.'\n\n"
-        f"Context:\n{context_joined}\n\n"
-        f"Question: {question}\n"
-        "Answer:"
-    )
+    prompt = f"""
+    You are a syllabus assistant. You must follow these rules:
+
+    1. ONLY answer using the provided syllabus context.
+    2. If the answer is NOT clearly stated in the context, you MUST reply with:
+    "Not specified in the syllabus."
+    3. Do NOT guess.
+    4. Do NOT invent dates, percentages, or policies.
+    5. If a numeric value is present, include it exactly.
+
+    Syllabus Context:
+    {context_joined}
+
+    Question:
+    {question}
+
+    Answer:
+    """
 
     # Call LLM wrapper
-    answer = generate_answer(prompt)
+    answer = generate_answer(context_joined, question)
     return answer
