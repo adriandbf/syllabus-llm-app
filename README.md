@@ -20,7 +20,7 @@ A minimal local web application that lets students upload a course syllabus (PDF
 ```
 User → Web UI → Flask API
                 → PDF Parser → Chunking → Embeddings → Vector Store
-                → Retriever → LLM (Gemini) → Answer
+                → Retriever → LLM → Answer
                 → Telemetry Logger
 ```
 
@@ -30,10 +30,10 @@ User → Web UI → Flask API
 
 * Backend: Python, Flask
 * LLM: Gemini API
-* RAG: FAISS or Chroma
+* RAG: FAISS
 * Embeddings: Gemini embeddings
-* PDF Parsing: pypdf or pdfplumber
-* Frontend: HTML, CSS, Vanilla JS
+* PDF Parsing: pypdf
+* Frontend: HTML, CSS, JS
 
 ---
 
@@ -57,8 +57,7 @@ GEMINI_API_KEY=your_api_key_here
 ## One-Command Run
 
 ```bash
-pip install -r requirements.txt
-python app.py
+python run.py
 ```
 
 Then open your browser at:
@@ -102,7 +101,7 @@ Each request logs:
 
 ---
 
-## Project Structure (Planned)
+## Project Structure
 
 ```
 syllabus-llm-app/
@@ -128,7 +127,7 @@ syllabus-llm-app/
 
 ---
 
-## Known Limitations (Initial)
+## Known Limitations
 
 * Single syllabus at a time
 * Text-based answers only
@@ -136,9 +135,9 @@ syllabus-llm-app/
 
 ---
 
-## Demo Video (To Be Added)
+## Demo Video
 
-A 3–5 minute walkthrough covering:
+A 5 minute walkthrough covering:
 
 * Problem statement
 * Live demo

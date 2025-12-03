@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, render_template
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
-# Local modules (to be implemented next)
+# TODO: Local modules
 from rag import process_document, answer_question
 from logger import log_request
 
@@ -102,7 +102,6 @@ def ask_question():
     )
 
     return jsonify({"answer": answer})
-
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -21,6 +21,7 @@ def log_request(pathway: str, latency_ms: int, tokens: int = None):
     latency_ms: response time
     tokens: number of tokens used (if available)
     """
+    # Works still
     timestamp = datetime.utcnow().isoformat()
 
     with open(LOG_FILE, mode="a", newline="", encoding="utf-8") as f:
