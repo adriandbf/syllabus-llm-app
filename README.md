@@ -137,12 +137,7 @@ syllabus-llm-app/
 
 ## Demo Video
 
-A 5 minute walkthrough covering:
-
-* Problem statement
-* Live demo
-* RAG explanation
-* Evaluation results
+https://youtu.be/JHhEVfb6sO0
 
 ---
 
